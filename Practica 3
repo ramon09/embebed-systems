@@ -1,9 +1,7 @@
-#device PIC18F4620
 #include <18F4620.h>
-#include <stdio.h>
 #include <stdlib.h>
-#define GLOBAL
-#fuses INTRC_IO, NOFCMEN, NOIESO, PUT, NOBROWNOUT, NOWDT
+#include <stdio.h>
+#fuses XT, NOFCMEN, NOIESO, PUT, NOBROWNOUT, NOWDT
 #fuses NOPBADEN, NOMCLR, STVREN, NOLVP, NODEBUG
 #use delay(clock=16000000)
 
@@ -16,54 +14,62 @@ void timer_0()
    contB++;
    contC++;
    contD++; 
-   //set_timer0(0);
 }
 
 void main()
 {
-   set_tris_a();
-   set_tris_b();
-   set_tris_c();
-   set_tris_d();
-   setup_timer_0(rtcc_internal||rtcc_div_256);
-   //set_timer0(0);
+   setup_oscillator(OSC_16MHZ);
+   setup_timer_0(RTCC_INTERNAL);
    enable_interrupts(int_timer0);
    enable_interrupts(global);
+   set_tris_a(0x00);
+   set_tris_b(0x00);
+   set_tris_c(0x00);
+   set_tris_d(0x00);
    while(true)
-   {
-      output_a(anilloA);      
-      output_b(anilloB);
-      output_c(anilloC);
-      output_d(anilloD);
-            
+   {      
       if(contA>=6)
       { 
-         anilloA=anilloA<<1;             
-         contA=0;         
-      }
+    output_a(anilloA);
+         anilloA=anilloA<<1;              
+         contA=0;
+    if(anilloA==64)
+         {
+            anilloA=1;
+         } 
+        }
       if(contB>=30)
       {
+         output_b(anilloB);
          anilloB=anilloB<<1;
          contB=0;
-      }
+         if(anilloB==256)
+         {
+            anilloB=1;
+         }
+       }
       if(contC>=60)
       {
-         anilloC=anilloC<<1;
-         contC=0;
-      }
-      if(contD>=90)
-      {
-         anilloD=anilloD<<1;
-         contD=0;
-      }     
-      if(anilloA==64)
-         anilloA=1;
-    //set_timer0(250);
-      if(anilloB==0)
-         anilloB=1;
-      if(anilloC==0)
-         anilloC=1;
-      if(anilloD==0)
-         anilloD=1;
+     output_c(anilloC);
+          anilloC=anilloC<<1;
+          contC=0;
+     if(anilloC==256)
+          {
+              anilloC=1;
+          }
+       }
+       if(contD>=90)
+       {
+     output_d(anilloD);
+          anilloD=anilloD<<1;
+          contD=0;
+     if(anilloD==256)
+         {
+            anilloD=1;
+         }
+       }    
+       
    }
 }
+
+  
