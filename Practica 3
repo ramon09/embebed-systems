@@ -5,7 +5,7 @@
 #fuses NOPBADEN, NOMCLR, STVREN, NOLVP, NODEBUG
 #use delay(clock=16000000)
 
-int contA=0, contB=0, contC=0, contD=0;      //This is the variables that will count the times that the cicle has repeat 
+int contA=0, contB=0, contC=0, contD=0;      //This is the asignation variables that will count the times that the cicle has repeat 
 int anilloA=1, anilloB=1, anilloC=1, anilloD=1;   //This is the variables that will count the number that will show in the cicle 
 #int_timer0
 void timer_0()      //this is the implementation of the interruption whit the timer_0
@@ -32,7 +32,7 @@ void main()
    {      
       if(contA>=6)      //this is the comprobation of the number of times that the ring A has been moved 
       {                    
-       output_a(anilloA);      //In this part we show the A ring
+         output_a(anilloA);      //In this part we show the A ring
          anilloA=anilloA<<1;   //with this we move the ring A 1 position to the MSB
          contA=0;
     if(anilloA==64)      //with this we set the ring A back to the beginin
@@ -52,7 +52,7 @@ void main()
        }
       if(contC>=60)
       {                        // This shows the ring C
-     output_c(anilloC);   
+          output_c(anilloC);   
           anilloC=anilloC<<1;      // This rotates the ring 1 position to the MSB
           contC=0;                 // This resets the counter for the ring C
      if(anilloC==256)
@@ -62,7 +62,7 @@ void main()
        }
        if(contD>=90)
        {                    // This shows the ring D
-     output_d(anilloD);
+          output_d(anilloD);
           anilloD=anilloD<<1;      // This rotates the ring 1 position to the MSB
           contD=0;                   // This resets the counter for the ring D
      if(anilloD==256)
