@@ -8,7 +8,7 @@
 int contA=0, contB=0, contC=0, contD=0;      //This is the asignation of the variables that will count the times that the cicle has repeat 
 int anilloA=1, anilloB=1, anilloC=1, anilloD=1;   //This is the asignation of the variables that will count the number that will be showed in the cicle 
 #int_timer0
-void timer_0()      //this is the implementation of the interruption wiht the timer_0
+void timer_0()      //this is the implementation of the interruption with the timer_0
 {
    contA++;  
    contB++;
@@ -20,10 +20,10 @@ void timer_0()      //this is the implementation of the interruption wiht the ti
 void main()
 {
    setup_oscillator(OSC_16MHZ);                       // This set up the oscilator frecuency to 16 MHz
-   set_timer0(0);                 // load the configuration of tye timer 0
-   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_256|T0_8_BIT);// this set up the timer_0 syncronized with internal oscillator
+   set_timer0(0);                 // load the configuration of the timer_0
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_256|T0_8_BIT);// this set up the timer_0 syncronized with the internal oscillator
    enable_interrupts(int_timer0);    // it sets the interruption to been able to execute                     
-   enable_interrupts(global);   //whit this comand we set able all the interruptions to be activated in any time
+   enable_interrupts(global);   //with this comand we set the interruptions to be able to activate any time
    set_tris_a(0x00);   //here is the set up of the port pins, in it we set all of them in output 
    set_tris_b(0x00);
    set_tris_c(0x00);
@@ -35,7 +35,7 @@ void main()
          output_a(anilloA);      //In this part we show the A ring
          anilloA=anilloA<<1;   //with this we move the ring A 1 position to the MSB
          contA=0;
-    if(anilloA==64)      //with this we set the ring A back to the beginin
+    if(anilloA==64)      //with this we set the ring A back to the begining
          {
             anilloA=1;
          } 
