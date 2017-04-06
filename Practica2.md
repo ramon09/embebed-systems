@@ -20,7 +20,7 @@ int flag=0;
 int main (void)
  { 
     //declaramos los puertos como salidas o entradas
-    set_tris_a(0x11000000); //primeros 5 pines del puerto a estan de salida y los otros 2 estan en entrda
+    set_tris_a(0x11000000); //first 5 pin of the output port are set in output and the other 2 on input
     set_tris_b(0xF0);       //los primeros pines de b estan en salida y los otros 4 estan en entrada
     set_tris_c(0xFF);       //todos los pines estan de manera de entrada del puerto c
     set_tris_d(0xFF);       //todos los pines estan de manera de entrada del puerto d
