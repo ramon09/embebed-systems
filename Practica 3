@@ -5,10 +5,10 @@
 #fuses NOPBADEN, NOMCLR, STVREN, NOLVP, NODEBUG
 #use delay(clock=16000000)
 
-int contA=0, contB=0, contC=0, contD=0;      //This is the asignation variables that will count the times that the cicle has repeat 
-int anilloA=1, anilloB=1, anilloC=1, anilloD=1;   //This is the variables that will count the number that will show in the cicle 
+int contA=0, contB=0, contC=0, contD=0;      //This is the asignation of the variables that will count the times that the cicle has repeat 
+int anilloA=1, anilloB=1, anilloC=1, anilloD=1;   //This is the asignation of the variables that will count the number that will be showed in the cicle 
 #int_timer0
-void timer_0()      //this is the implementation of the interruption whit the timer_0
+void timer_0()      //this is the implementation of the interruption wiht the timer_0
 {
    contA++;  
    contB++;
@@ -19,7 +19,7 @@ void timer_0()      //this is the implementation of the interruption whit the ti
 
 void main()
 {
-   setup_oscillator(OSC_16MHZ);                       // This set up the the oscilator frecuency to 16 MHz
+   setup_oscillator(OSC_16MHZ);                       // This set up the oscilator frecuency to 16 MHz
    set_timer0(0);                 // load the configuration of tye timer 0
    setup_timer_0(RTCC_INTERNAL|RTCC_DIV_256|T0_8_BIT);// this set up the timer_0 syncronized with internal oscillator
    enable_interrupts(int_timer0);    // it sets the interruption to been able to execute                     
