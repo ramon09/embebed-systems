@@ -5,67 +5,69 @@
 #fuses NOPBADEN, NOMCLR, STVREN, NOLVP, NODEBUG
 #use delay(clock=16000000)
 
-int contA=0, contB=0, contC=0, contD=0;
-int anilloA=1, anilloB=1, anilloC=1, anilloD=1;
+int contA=0, contB=0, contC=0, contD=0;      //This is the variables that will count the times that the cicle has repeat 
+int anilloA=1, anilloB=1, anilloC=1, anilloD=1;   //This is the variables that will count the number that will show in the cicle 
 #int_timer0
-void timer_0()
+void timer_0()      //this is the implementation of the interruption whit the timer_0
 {
    contA++;  
    contB++;
    contC++;
    contD++; 
+   set_timer0(0);
 }
 
 void main()
 {
-   setup_oscillator(OSC_16MHZ);
-   setup_timer_0(RTCC_INTERNAL);
-   enable_interrupts(int_timer0);
-   enable_interrupts(global);
-   set_tris_a(0x00);
+   setup_oscillator(OSC_16MHZ);                       // This set up the the oscilator frecuency to 16 MHz
+   set_timer0(0);                 // load the configuration of tye timer 0
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_256|T0_8_BIT);// this set up the timer_0 syncronized with internal oscillator
+   enable_interrupts(int_timer0);    // it sets the interruption to been able to execute                     
+   enable_interrupts(global);   //whit this comand we set able all the interruptions to be activated in any time
+   set_tris_a(0x00);   //here is the set up of the port pins, in it we set all of them in output 
    set_tris_b(0x00);
    set_tris_c(0x00);
    set_tris_d(0x00);
    while(true)
    {      
-      if(contA>=6)
-      { 
-    output_a(anilloA);
-         anilloA=anilloA<<1;              
+      if(contA>=6)      //this is the comprobation of the number of times that the ring A has been moved 
+      {                    
+       output_a(anilloA);      //In this part we show the A ring
+         anilloA=anilloA<<1;   //with this we move the ring A 1 position to the MSB
          contA=0;
-    if(anilloA==64)
+    if(anilloA==64)      //with this we set the ring A back to the beginin
          {
             anilloA=1;
          } 
         }
-      if(contB>=30)
+      if(contB>=30)   // This check the overflow of the ring B 
       {
-         output_b(anilloB);
-         anilloB=anilloB<<1;
-         contB=0;
-         if(anilloB==256)
+         output_b(anilloB);   // This shows the ring B
+         anilloB=anilloB<<1;  // This rotates the ring B 1 position to the MSB
+         contB=0;              // This is the reset of the counter for the ring B 
+         if(anilloB==256)      // this reset the ring B when it overflows
          {
-            anilloB=1;
+            anilloB=1;      
          }
        }
       if(contC>=60)
-      {
-     output_c(anilloC);
-          anilloC=anilloC<<1;
-          contC=0;
+      {                        // This shows the ring C
+     output_c(anilloC);   
+          anilloC=anilloC<<1;      // This rotates the ring 1 position to the MSB
+          contC=0;                 // This resets the counter for the ring C
      if(anilloC==256)
           {
-              anilloC=1;
+              anilloC=1;      // This resets the ring C to the beginin
           }
        }
        if(contD>=90)
-       {
+       {                    // This shows the ring D
      output_d(anilloD);
-          anilloD=anilloD<<1;
-          contD=0;
+          anilloD=anilloD<<1;      // This rotates the ring 1 position to the MSB
+          contD=0;                   // This resets the counter for the ring D
      if(anilloD==256)
          {
-            anilloD=1;
+            anilloD=1;               // This resets the ring D to the beginin
          }
        }    
        
