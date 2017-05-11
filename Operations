@@ -1,0 +1,32 @@
+float Operacion(float num1, float num2 , char cad[])
+{
+    float result=0;
+    switch( Cad[posicionOperacion])
+    {
+        case('+'):
+        {
+             result=num1+num2;
+             return result;
+            break;
+        }
+        case('-'):
+        {
+            result=num1-num2;
+            return result;
+            break;
+        }
+        case('*'):
+        {
+            result=num1*num2;
+            return result;
+            break;
+        }
+        case('/'):
+        {
+            result=num1/num2;
+            return result;
+            break;
+        }
+    }
+    
+}
