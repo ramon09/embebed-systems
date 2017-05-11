@@ -1,0 +1,127 @@
+#define uC18f4620
+#include <18F4620.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#fuses XT, NOFCMEN, NOIESO, PUT, NOBROWNOUT, NOWDT
+#fuses NOPBADEN, MCLR, STVREN, NOLVP, NODEBUG
+#use delay(clock=16000000)
+#define RX_232        PIN_C7
+#define TX_232        PIN_C6
+#use RS232(BAUD=9600, XMIT=TX_232, RCV=RX_232, BITS=8,PARITY=N, STOP=1)
+#use fast_io(c)
+byte banderas=0;
+#bit banderaCaracterNuevo =banderas.0
+#bit FinDeTrama=banderas.1
+#bit banderaEncontroSigno=banderas.2
+#bit inicioDeBusqueda=banderas.3
+#bit error=banderas.4
+#bit divEntre0=banderas.5
+#bit bSignos=banderas.6
+#define tamanoDeVector 25
+void isr_rda(void);
+void repito (void);
+void errores (void);
+void timer_0 (void);
+void mensaje (void);
+signed int buscarFinTrama(void);
+int nonum(void);
+char Cadena[tamanoDeVector]={0};
+int posicionOperacion=0;
+int contadorVector=0;
+int numeroDeSignos=0;
+int16 contandortimer0=0;
+int16 contadorAviso=0;
+float resultado=0;
+float numero1=0;
+float numero2=0;
+signed int contadorDeBusqueda=0;
+
+#int_timer0
+void timer_0()      
+{
+ contandortimer0++;
+ contadorAviso++;
+ set_timer0(0);
+}
+
+void configuracion(void){
+    setup_oscillator(OSC_NORMAL);
+   set_tris_c(0x80);
+   set_timer0(0);
+   clear_interrupt(INT_RDA);
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_256|T0_8_BIT);
+   enable_interrupts(int_timer0);
+   enable_interrupts(INT_RDA);
+   enable_interrupts(GLOBAL);
+   mensaje();
+}
+
+void repito (void)
+{
+   error=0;
+   banderas=0;
+   contadorDeBusqueda=0;
+   posicionOperacion=0;
+   numeroDeSignos=0;
+   divEntre0=0;
+   bSignos=0;
+   resultado=0;
+   contadorVector=0;
+   for (int i=0; i<tamanoDeVector; i++)
+   {
+       Cadena[i]=0;
+   }
+ 
+}
+
+void errores(void)
+{
+   nonum();
+   if(error==1)
+   {
+      printf("\r *ERROR* Humano intente otravez \r");
+      repito();
+      printf("\r ********************** \r");
+   }
+   else
+   {
+      error=0;
+   }
+}
+
+
+
+int nonum(void)
+{
+  char auxilar;
+  for(int p=0; tamanoDeVector-1>=p; p++)
+  {
+     auxilar=Cadena[p];
+     if((auxilar>=60 && auxilar<=127))
+     {
+        error=1;
+        return error;
+     }
+     if((auxilar>=1 &&auxilar<=41))
+     {
+        error=1;
+        return error;
+     }
+     if(auxilar==44 ||auxilar==58)
+     {
+        error=1;
+        return error;
+     }
+  }
+  return 1;
+}
+
+void mensaje(void)
+{
+  printf("\r esta es una calculadora Aritmética de Punto Flotante\r");
+  printf(" la forma de hacer las operaciones se hace de la siguiente manera \r ");
+  printf("primer_numero + signo+ segundo numero+ puntocoma \r");
+  printf(" ejemplo = 123+-200; \r");
+  printf("\r***********************************\r");
+}
