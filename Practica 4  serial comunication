@@ -1,0 +1,128 @@
+
+#use RS232(BAUD=9600, XMIT=TX_232, RCV=RX_232, BITS=8,PARITY=N, STOP=1)
+
+#int_rda
+void isr_rda(void)
+{
+   while(kbhit())//signific que va  a ocurrir mientras que se sigan pasando datos por el puerto serial
+   {
+      Cadena[contadorVector]=getc(); 
+      contandortimer0=0;
+      if(Cadena[contadorVector]==0x08)
+      {
+       if(contadorVector==0)
+         {
+          contadorVector=0;
+         }
+         else
+         {
+          contadorVector--;
+         }
+      }
+      else
+      {
+         contadorVector++;
+      }
+      if(contadorVector >= tamanoDeVector)
+         contadorVector--;//si el vector se encuentra lleno entonces regresamos una pocsicion para sobreescribirla si  se ejeuta denuevo la instrucion
+      banderaCaracterNuevo=1;//activamos una bandera para decir que se ha encontrado un nuevo caracter
+     }
+   
+}
+//#endif
+
+signed int buscarFinTrama(void)
+{
+   char auxilar=0;
+   if (banderaCaracterNuevo==1){
+   contadorDeBusqueda=0;
+   banderaCaracterNuevo=0; 
+    while((signed)tamanoDeVector>=contadorDeBusqueda)
+      {     
+          auxilar=Cadena[contadorDeBusqueda];
+          if ((auxilar>='*' && auxilar<='/')&&(auxilar!='.'&&auxilar!=','))
+         {
+            numeroDeSignos++;            
+         }
+         if( Cadena[contadorDeBusqueda]==59)
+         {
+            FinDeTrama=1;
+            return contadorDeBusqueda;
+         }
+         contadorDeBusqueda++;  
+      }
+      if(numeroDeSignos>3)
+      {
+         bSignos=1;
+      }
+      else
+      {
+        numeroDeSignos=0;
+      }
+   }
+      else
+      return 0;
+}
+
+
+int separarTrama(void) 
+{
+   if(FinDeTrama==1)
+   {
+      posicionOperacion=0;
+      char auxilar=0;
+      while(contadorDeBusqueda > posicionOperacion)
+      
+      {
+         auxilar=  Cadena[posicionOperacion];
+         if((auxilar>='*' && auxilar<='/')&&(auxilar!='.'&&auxilar!=',')&&posicionOperacion!=0)
+         {
+            FinDeTrama=0;
+            banderaEncontroSigno=1;
+            error=0;
+            return 1;
+         }
+         else
+         {
+         error=1;
+         }         
+         posicionOperacion++;
+       }
+   }
+   else
+   return 0;
+}
+
+void PrimerNumero(void)
+{
+   char vectorAuxiliar[10]={0,0,0,0,0,0,0,0,0,0};
+   for(int i=0;i<posicionOperacion;i++)
+   {
+      vectorAuxiliar[i]= Cadena[i];
+   }
+   numero1=atof(vectorAuxiliar);
+   
+   
+}
+void SegundoNumero(void){
+    char vector[10]={0,0,0,0,0,0,0,0,0,0};
+ for(int i=(posicionOperacion+1);i<contadorDeBusqueda;i++)
+ {
+  vector[i-(posicionOperacion+1)]= Cadena[i];
+  }  
+numero2=atof(vector);
+   if (numero2==0 &&  Cadena[posicionOperacion] == '/')
+   {
+      divEntre0=1;     
+   }
+banderaEncontroSigno=0;
+
+}
+
+void imprimiresultado()
+{
+   float op=0;
+   op=Operacion(numero1,numero2,Cadena);
+   printf("\r el resultado es %.4f \r",op);
+   printf("\r ********************** \r");
+}
