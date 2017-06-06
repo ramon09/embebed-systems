@@ -1,1 +1,143 @@
 
++#include <config.h>
++#include <Resultado.h>
++void main()
++{
++   configuracionADC();
++   while(TRUE)
++   {
++      read_adc(ADC_START_ONLY);
++      mostrarResultados();
++   }
++
++}
++
++//librerias config.h
++#device PIC18F4620
++#device ADC=10
++//
++#define uC18f4620
++#include <18F4620.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++//
++#fuses XT, NOFCMEN, NOIESO, PUT, NOBROWNOUT, NOWDT
++#fuses NOPBADEN, MCLR, STVREN, NOLVP, NODEBUG
++//
++#use fast_io(a)
++#use fast_io(b)
++#use fast_io(c)
++#use fast_io(d)
++#use delay(clock=16000000)
++byte banderas=0;
++#bit banderaCanal =banderas.0
++//
++int16 valorPot1=0;
++double valorPot2=0;
++double voltaje=0;
++int16 valor=0;
++int Tcontador=0;
++//
++#int_timer0
++void timer_0()      
++{
++   Tcontador++; 
++   set_timer0(0);
++}
++
++#INT_AD
++void AD_isr(void)
++{
++   if(Tcontador>3)
++   {
++      if(banderaCanal==0)
++      {
++         valorPot1=read_ADC(ADC_READ_ONLY);
++         set_adc_channel(1);
++         banderaCanal=1;
++      }
++      else if(banderaCanal==1)
++      {
++         valorPot2=read_ADC(ADC_READ_ONLY);
++         set_adc_channel(0);
++         banderaCanal=0;
++      }
++      Tcontador=0;
++   }
++}
++
++
++
++void configuracionADC(){
++   setup_oscillator(OSC_NORMAL);
++   set_tris_a(0x03);
++   set_tris_b(0x00);       //todos pines estan en salida en el puerto b
++   set_tris_c(0x00);       //todos los pines estan en salida
++   set_tris_d(0x00);
++   setup_adc(adc_clock_internal);
++   setup_adc_ports(0011);
++   set_timer0(0); 
++   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_128|T0_8_BIT);
++    enable_interrupts(int_timer0);
++   enable_interrupts(INT_AD);
++   enable_interrupts(global); 
++   set_adc_channel(0);
++   banderaCanal=0;
++}
++
++//libreria resultado.h
++void calculo(void)
++{
++   voltaje= valorPot2*.004882813;
++   if(voltaje <.5 && voltaje>0)
++   {
++      valor=1;
++   }
++   else if(voltaje <1 && voltaje>=.5)
++   {
++      valor=2;
++   }
++   else if(voltaje <1.5 && voltaje>=1)
++   {
++      valor=4;
++   }
++   else if(voltaje <2 && voltaje>=1.5)
++   {
++     valor=8;
++   }
++   else if(voltaje <2.5 && voltaje>=2)
++   {
++      valor=16;
++   }
++   else if(voltaje <3 && voltaje>=2.5)
++   {
++      valor=32;
++   }
++   else if(voltaje <3.5 && voltaje>=3)
++   {
++      valor=64;
++   }
++   else if(voltaje <4 && voltaje>=3.5)
++   {
++      valor=128;
++   }
++   else if(voltaje <4.5 && voltaje>=4)
++   {
++     valor=256;
++   }
++   else if(voltaje <5 && voltaje>=4.5)
++   {
++      valor=512;
++   }   
++} 
++
++ 
++ void mostrarResultados(void)
++ {
++      output_a(valorPot1<<2);
++      output_b(valorPot1>>4);
++      calculo();
++      output_c(valor);
++      output_d(valor>>8);
++ }
